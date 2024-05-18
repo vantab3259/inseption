@@ -1,0 +1,11 @@
+
+services:
+  web:
+    build: ./requirements/nginx
+    container_name: nginx
+    image: nginx
+    ports:
+      - 443:443
+
+
+
