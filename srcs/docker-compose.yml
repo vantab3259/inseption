@@ -6,6 +6,9 @@ services:
     image: nginx
     ports:
       - 443:443
+    volumes:
+      - ./requirements/nginx/tools/:/var/www/yolo/
+    restart: always
 
 
 
