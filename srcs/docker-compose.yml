@@ -1,14 +1,27 @@
 
 services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    build: ./requirements/mariadb
+    # volumes:
+    #   - ./requirements/mariadb:/var/lib/mysql
+    expose:
+      - "3306"
+    env_file:
+      - .env
   web:
     build: ./requirements/nginx
+
     container_name: nginx
     image: nginx
-    ports:
-      - 443:443
     volumes:
       - ./requirements/nginx/tools/:/var/www/yolo/
+    ports:
+      - 443:443
     restart: always
+    env_file:
+      - .env
 
 
 
