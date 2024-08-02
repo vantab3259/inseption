@@ -4,24 +4,72 @@ services:
     image: mariadb
     container_name: mariadb
     build: ./requirements/mariadb
-    # volumes:
-    #   - ./requirements/mariadb:/var/lib/mysql
+    volumes:
+      - mariadb_data:/var/lib/mysql/
+    networks:
+      - inception
     expose:
       - "3306"
+    init: true
+    restart: on-failure
     env_file:
       - .env
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress/
+    volumes:
+      - wordpress_data:/var/www/html/
+    networks:
+      - inception
+    expose:
+      - "9000"
+    init: true
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+
   web:
     build: ./requirements/nginx
 
     container_name: nginx
     image: nginx
     volumes:
-      - ./requirements/nginx/tools/:/var/www/yolo/
+      - ./requirements/nginx/tools/:/var/www/bonus/
+      - wordpress_data:/var/www/html/
     ports:
       - 443:443
-    restart: always
+    expose:
+      - "443"
+    networks:
+      - inception
+    restart: on-failure
     env_file:
       - .env
+    depends_on:
+      - wordpress
 
+
+networks:
+  inception:
+    name: inception
+
+volumes:
+  mariadb_data:
+    name: mariadb_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mudoh/data/mariadb_data
+  wordpress_data:
+    name: wordpress_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mudoh/data/wordpress_data
 
 
